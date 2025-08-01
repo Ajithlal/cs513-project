@@ -1,0 +1,105 @@
+Primary Key Uniqueness
+SELECT *
+        FROM Menu
+        GROUP BY id
+        HAVING COUNT(*) > 1;
+
+SELECT *
+        FROM MenuItem 
+        GROUP BY id
+        HAVING COUNT(*) > 1;
+
+SELECT *
+        FROM MenuPage
+        GROUP BY id
+        HAVING COUNT(*) > 1;
+
+SELECT *
+        FROM Dish
+        GROUP BY id
+        HAVING COUNT(*) > 1;
+
+Foreign Key Validity
+
+SELECT *
+    FROM MenuPage
+    WHERE menu_id NOT IN (SELECT id FROM Menu);
+
+SELECT *
+    FROM MenuItem
+    WHERE menu_page_id NOT IN (SELECT id FROM MenuPage);
+
+SELECT *
+    FROM MenuItem
+    WHERE dish_id NOT IN (SELECT id FROM Dish);
+
+Value Ranges
+
+SELECT *
+        FROM Menu
+        WHERE page_count < 0 or dish_count < 0;
+
+SELECT * 
+        FROM Menu
+        JOIN MenuPage
+        ON Menu.id = MenuPage.menu_id
+        GROUP BY menu_id HAVING COUNT(*) < Menu.page_count;
+
+SELECT *
+        FROM MenuItem
+        WHERE created_at > updated_at;
+
+SELECT *
+    FROM MenuItem
+    WHERE price IS NULL OR price = 0;
+
+SELECT *
+        FROM MenuItem
+        WHERE price < 0;
+
+SELECT MenuItem.*, Dish.highest_price, Dish.lowest_price
+        FROM MenuItem
+        JOIN Dish ON MenuItem.dish_id = Dish.id
+        WHERE MenuItem.price > Dish.highest_price 
+            OR MenuItem.price < Dish.lowest_price;
+
+SELECT *
+        FROM MenuPage
+        WHERE page_number < 0 OR full_height < 0 OR full_width < 0;
+
+SELECT *
+        FROM Dish
+        WHERE first_appeared > last_appeared;
+
+SELECT *
+        FROM Dish
+        WHERE lowest_price > highest_price;
+
+SELECT *
+        FROM Dish
+        WHERE menus_appeared < 0 
+            OR times_appeared < 0 
+            OR first_appeared < 0 
+            OR last_appeared < 0
+            OR lowest_price < 0 
+            OR highest_price < 0;
+
+SELECT * FROM Dish
+        WHERE name LIKE '%coffee%'
+            AND name NOT LIKE 'coffee';
+
+SELECT 
+        (CAST(strftime('%Y', Menu.Date) AS INTEGER) / 10) * 10 AS Decade,
+        AVG(MenuItem.price) AS Avg_Coffee_Price
+    FROM Menu
+    JOIN MenuPage ON Menu.id = MenuPage.menu_id
+    JOIN MenuItem ON MenuItem.menu_page_id = MenuPage.id
+    JOIN Dish_clustered ON Dish_clustered.id = MenuItem.dish_id
+    WHERE 
+        Dish_clustered.name = 'coffee'
+        AND Menu.currency = 'Dollars'
+        AND Menu.currency_symbol = '$'
+        AND CAST(strftime('%Y', Menu.Date) AS INTEGER) BETWEEN 1900 AND 2000
+        AND MenuItem.price IS NOT NULL   
+    GROUP BY Decade
+    ORDER BY Decade;
