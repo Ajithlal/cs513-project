@@ -84,6 +84,8 @@ SELECT *
             OR lowest_price < 0 
             OR highest_price < 0;
 
+Use Case:
+
 SELECT * FROM Dish
         WHERE name LIKE '%coffee%'
             AND name NOT LIKE 'coffee';
@@ -103,3 +105,95 @@ SELECT
         AND MenuItem.price IS NOT NULL   
     GROUP BY Decade
     ORDER BY Decade;
+
+Integrity Constraints:
+IC-M1:
+SELECT COUNT(*)
+FROM Menu
+WHERE id LIKE '%[^0-9]%' OR id IS NULL OR TRIM(id) = ''
+   OR page_count LIKE '%[^0-9]%' OR page_count IS NULL OR TRIM(page_count) = ''
+   OR dish_count LIKE '%[^0-9]%' OR dish_count IS NULL OR TRIM(dish_count) = '';
+
+IC-M2:
+SELECT COUNT(*)
+FROM Menu
+WHERE date NOT LIKE '____-__-__'
+   OR date IS NULL
+   OR NOT (SUBSTR(date, 5, 1) = '-' AND SUBSTR(date, 8, 1) = '-');
+
+IC-M3:
+SELECT COUNT(*)
+        FROM Menu
+        WHERE name LIKE '%  %' OR name LIKE '%\[%' OR name LIKE '%\]%'
+        OR event LIKE '%  %' OR event LIKE '%\[%' OR event LIKE '%\]%'
+        OR place LIKE '%  %' OR place LIKE '%\[%' OR place LIKE '%\]%';
+IC-M4:
+SELECT COUNT(*)
+FROM Menu
+WHERE name != TRIM(name)
+   OR sponsor != TRIM(sponsor)
+   OR event != TRIM(event)
+   OR venue != TRIM(venue)
+   OR place != TRIM(place)
+   OR location != TRIM(location)
+   OR location_type != TRIM(location_type);
+
+IC-MI1:
+SELECT COUNT(*)
+FROM MenuItem
+WHERE price IS NULL OR TRIM(price) = '';
+
+IC-MI2:
+SELECT COUNT(*)
+FROM MenuItem
+WHERE id LIKE '%[^0-9]%'
+   OR menu_page_id LIKE '%[^0-9]%'
+   OR dish_id LIKE '%[^0-9]%';
+
+IC-MI3:
+SELECT COUNT(*)
+        FROM MenuItem
+        WHERE created_at NOT LIKE '____-__-__%' OR updated_at NOT LIKE '____-__-__%';
+
+IC-MI4:
+SELECT COUNT(*)
+FROM MenuItem
+WHERE id != TRIM(id)
+   OR menu_page_id != TRIM(menu_page_id)
+   OR price != TRIM(price)
+   OR high_price != TRIM(high_price)
+   OR dish_id != TRIM(dish_id)
+   OR created_at != TRIM(created_at)
+   OR updated_at != TRIM(updated_at)
+   OR xpos != TRIM(xpos)
+   OR ypos != TRIM(ypos);
+
+IC-MP1:
+SELECT COUNT(*)
+FROM MenuPage
+WHERE TRIM(id) LIKE '%[^0-9]%'
+   OR TRIM(menu_id) LIKE '%[^0-9]%'
+   OR TRIM(page_number) LIKE '%[^0-9]%'
+   OR TRIM(full_height) LIKE '%[^0-9]%'
+   OR TRIM(full_width) LIKE '%[^0-9]%';
+
+IC-MP2:
+SELECT COUNT(*)
+FROM MenuPage
+WHERE id != TRIM(id)
+   OR menu_id != TRIM(menu_id)
+   OR page_number != TRIM(page_number)
+   OR full_height != TRIM(full_height)
+   OR full_width != TRIM(full_width);
+
+IC-D1:
+SELECT COUNT(*)
+FROM Dish
+WHERE name IS NULL OR TRIM(name) = '';
+
+IC-D2:
+SELECT COUNT(*)
+FROM Dish
+WHERE name != LOWER(name)
+   OR name != TRIM(name)
+   OR name LIKE '%  %';
