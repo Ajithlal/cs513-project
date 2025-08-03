@@ -124,9 +124,9 @@ WHERE date NOT LIKE '____-__-__'
 IC-M3:
 SELECT COUNT(*)
         FROM Menu
-        WHERE name LIKE '%  %' OR name LIKE '%\[%' OR name LIKE '%\]%'
-        OR event LIKE '%  %' OR event LIKE '%\[%' OR event LIKE '%\]%'
-        OR place LIKE '%  %' OR place LIKE '%\[%' OR place LIKE '%\]%';
+        WHERE name LIKE '%  %' OR name LIKE '%[%' OR name LIKE '%]%' OR name != name
+        OR event LIKE '%  %' OR event LIKE '%[%' OR event LIKE '%]%' OR event != event
+        OR place LIKE '%  %' OR place LIKE '%[%' OR place LIKE '%]%' OR place != place;
 IC-M4:
 SELECT COUNT(*)
 FROM Menu
@@ -137,6 +137,11 @@ WHERE name != TRIM(name)
    OR place != TRIM(place)
    OR location != TRIM(location)
    OR location_type != TRIM(location_type);
+
+IC-M5:
+SELECT COUNT(*)
+        FROM Menu
+        WHERE place IS NULL OR place = '';
 
 IC-MI1:
 SELECT COUNT(*)
